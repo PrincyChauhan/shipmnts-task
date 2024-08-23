@@ -2,7 +2,7 @@ const XLSX = require('xlsx');
 const path = require('path');
 const fs = require('fs');
 
-const readExcelFile = (fileName) => {
+const readExcelFile = async(fileName) => {
     try {
         const uploadsDir = path.join(__dirname, 'uploads');
         const filePath = path.join(uploadsDir, fileName);
