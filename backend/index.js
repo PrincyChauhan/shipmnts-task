@@ -1,6 +1,9 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
+const readExcelFile = require('./readExcel');
+const uploadsDir = 'uploads/';
 
 const app = express();
 const port = 3001;
@@ -27,15 +30,13 @@ app.post('/upload', upload.single('file'), (req, res) => {
     if (!req.file) {
         return res.status(400).send('No file uploaded.');
     }
+    readExcelFile(req.file.filename);
     res.send({
         message: 'File uploaded successfully',
         file: req.file
     });
 });
 
-// Create uploads directory if it doesn't exist
-const fs = require('fs');
-const uploadsDir = 'uploads/';
 if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir);
 }
