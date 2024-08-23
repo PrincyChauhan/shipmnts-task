@@ -1,15 +1,26 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
-import "../App.css"; // Import the CSS file
+import "../App.css";
+import axios from "axios";
 
 const FileUpload = () => {
   const [data, setData] = useState([]);
+  const [file, setFile] = useState(null);
+  const [uploadStatus, setUploadStatus] = useState("");
 
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
+  const clear = () => {
+    setData([]);
+    setFile(null);
+    setUploadStatus("");
+  };
+
+  const handleFileChange = (event) => {
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+
+      // Read the file to display its contents
       const reader = new FileReader();
-
       reader.onload = (e) => {
         const binaryStr = e.target.result;
         const workbook = XLSX.read(binaryStr, { type: "binary" });
@@ -18,8 +29,34 @@ const FileUpload = () => {
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
         setData(jsonData);
       };
+      reader.readAsBinaryString(selectedFile);
+    }
+  };
 
-      reader.readAsBinaryString(file);
+  const handleFileUpload = async (event) => {
+    event.preventDefault();
+    if (!file) {
+      setUploadStatus("No file selected.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setUploadStatus(`File uploaded successfully: ${response.data.message}`);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      setUploadStatus("");
     }
   };
 
@@ -52,9 +89,15 @@ const FileUpload = () => {
       <input
         type="file"
         accept=".xls, .xlsx"
-        onChange={handleFileUpload}
+        onChange={handleFileChange}
         className="upload-button"
       />
+      <button onClick={handleFileUpload} className="upload-button">
+        Upload File
+      </button>
+      <button onClick={clear} className="cancle-button">
+        Cancle File
+      </button>
       <div className="table-container">
         {data.length > 0 && (
           <table className="data-table">
@@ -63,7 +106,7 @@ const FileUpload = () => {
           </table>
         )}
       </div>
-      <button className="upload-button">Upload File</button>
+      <p>{uploadStatus}</p>
     </div>
   );
 };
