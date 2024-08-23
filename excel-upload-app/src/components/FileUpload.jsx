@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
+import "../App.css"; // Import the CSS file
 
 const FileUpload = () => {
   const [data, setData] = useState([]);
@@ -47,14 +48,22 @@ const FileUpload = () => {
   };
 
   return (
-    <div>
-      <input type="file" accept=".xls, .xlsx" onChange={handleFileUpload} />
-      {data.length > 0 && (
-        <table>
-          {renderTableHeader()}
-          <tbody>{renderTableRows()}</tbody>
-        </table>
-      )}
+    <div className="file-upload-container">
+      <input
+        type="file"
+        accept=".xls, .xlsx"
+        onChange={handleFileUpload}
+        className="upload-button"
+      />
+      <div className="table-container">
+        {data.length > 0 && (
+          <table className="data-table">
+            {renderTableHeader()}
+            <tbody>{renderTableRows()}</tbody>
+          </table>
+        )}
+      </div>
+      <button className="upload-button">Upload File</button>
     </div>
   );
 };
