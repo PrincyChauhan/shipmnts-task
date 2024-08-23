@@ -5,7 +5,7 @@ const contactSchema = new Schema({
     contactID: {
         type: Number,
         required: true,
-        unique: true
+        unique: false
     },
     company_id: {
         type: Schema.Types.ObjectId,
@@ -23,7 +23,7 @@ const contactSchema = new Schema({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: false
     },
     phone: {
         type: String,
